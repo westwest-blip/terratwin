@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TerraTwin — Yerdə Ayın və Marsın əkizləri</title>
+<meta name="description" content="NASA Space Apps Challenge 2026: Yer üzündə Ay və Mars analoqlarını açıq NASA məlumatları ilə tapan interaktiv 3D təqdimat.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='26' cy='34' r='18' fill='%235B9BE6'/%3E%3Ccircle cx='50' cy='14' r='8' fill='%23D97A48'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/jsm/" } }
+</script>
+<script src="data/power.js"></script>
+<script src="data/orbits.js"></script>
+</head>
+<body>
+<canvas id="gl" tabindex="-1"></canvas>
+<div id="labels"></div>
+<div id="craterLabels" style="display:none"></div>
+<div class="scrim left" id="scrimL"></div>
+<div class="scrim right" id="scrimR"></div>
+
+<!-- yükləmə -->
+<div id="loader">
+  <div class="ld-mark"><span></span><span></span><span></span></div>
+  <p class="ld-title">TerraTwin</p>
+  <p class="ld-sub">NASA məlumatları yüklənir</p>
+  <div class="ld-bar"><i id="ldBar"></i></div>
+  <p class="ld-file" id="ldFile">Blue Marble, LRO, Viking, MOLA, Deep Star Maps</p>
+</div>
+<div id="nogl" hidden>
+  <h2>WebGL işləmir</h2>
+  <p>Səhifəni <b>start.bat</b> ilə açın. Chrome və ya Edge-də aparat sürətləndirməsi aktiv olmalıdır.</p>
+</div>
+
+<!-- üst panel -->
+<header id="top">
+  <button class="brand" data-go="intro" aria-label="Əvvələ qayıt">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="16" cy="22" r="11" fill="#5B9BE6"/><circle cx="16" cy="22" r="11" fill="url(#sh)"/><circle cx="33" cy="10" r="4.2" fill="#D97A48"/><circle cx="31" cy="30" r="2.6" fill="#C9CCD3"/><defs><radialGradient id="sh" cx=".7" cy=".3" r=".9"><stop offset=".45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient></defs></svg>
+    <span>TerraTwin</span>
+  </button>
+  <div class="tools">
+    <button class="tool" id="btnDebris" aria-pressed="false">Orbitdəki obyektlər</button>
+    <button class="tool" id="btnLayer" aria-pressed="false">Hündürlük xəritəsi</button>
+    <label class="tool sel"><span class="sr">Keyfiyyət</span>
+      <select id="quality">
+        <option value="ultra">Ultra · 16K</option>
+        <option value="high" selected>Yüksək · 8K</option>
+        <option value="medium">Orta</option>
+      </select>
+    </label>
+    <button class="tool" id="btnPresent">Təqdimat</button>
+    <button class="tool icon" id="btnFull" aria-label="Tam ekran"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <span id="fps"></span>
+  </div>
+</header>
+
+<!-- sağdakı yarımdairəvi naviqasiya -->
+<nav id="dial" aria-label="Slaydlar">
+  <svg class="dial-arc" aria-hidden="true"><circle id="dialCircle"/></svg>
+  <div id="dialItems"></div>
+  <div id="dialTitle"></div>
+</nav>
+
+<main id="ui">
+
+<!-- 1. GİRİŞ -->
+<section class="sec" data-sec="intro" data-title="Giriş">
+  <div class="col left hero">
+    <p class="kicker">NASA Space Apps Challenge 2026, Gəncə</p>
+    <h1>TerraTwin</h1>
+    <p class="lead">Yer üzündə Ayın və Marsın əkizlərini axtarırıq: relyefi, iqlimi və süxurları onlara bənzəyən yerləri. Hamısı açıq NASA məlumatları ilə.</p>
+    <div class="stats">
+      <button class="stat" data-go="analogs"><b>9</b><span>ərazi Yerdə</span></button>
+      <button class="stat" data-go="targets"><b>3</b><span>hədəf Ayda və Marsda</span></button>
+      <button class="stat" data-go="twins"><b>4</b><span>real foto cütü</span></button>
+      <button class="stat" data-go="history"><b>8</b><span>tarixi sınaq yeri</span></button>
+    </div>
+    <p class="hint">Planetə klikləyin və ya rəqəmi seçin</p>
+    <div class="debris-box" id="debrisBox" hidden>
+      <h3>Yer orbitində nə var?</h3>
+      <p id="debrisLive"></p>
+      <ul id="debrisFacts"></ul>
+      <p class="src" id="debrisSrc"></p>
+    </div>
+  </div>
+  <aside class="col right body-panel" id="bodyPanel" hidden></aside>
+</section>
+
+<!-- 2. ƏKİZLƏR -->
+<section class="sec" data-sec="twins" data-title="Əkizlər">
+  <div class="col left">
+    <h2>Yerdəki əkizlər</h2>
+    <p class="lead">Hər xətt Yerdəki bir ərazini Ayda və ya Marsda ona bənzəyən yerlə birləşdirir. Bir növü seçin: real NASA fotoları yan-yana açılacaq.</p>
+    <div class="types" id="typeList"></div>
+    <p class="legend"><i class="sw moon"></i>Aya bənzəyən <i class="sw mars"></i>Marsa bənzəyən</p>
+  </div>
+</section>
+
+<!-- 3. TARİX -->
+<section class="sec" data-sec="history" data-title="Tarix">
+  <div class="col left">
+    <h2>NASA bunu artıq edir</h2>
+    <p class="lead">1965-dən bəri astronavtlar və robotlar Yerdəki analoq ərazilərdə hazırlaşır. Biz bu siyahını yeni yerlərlə genişləndiririk.</p>
+    <article class="event" id="eventCard"></article>
+  </div>
+  <div class="timeline" id="timeline"></div>
+</section>
+
+<!-- 4. HƏDƏFLƏR -->
+<section class="sec" data-sec="targets" data-title="Hədəflər">
+  <div class="col left">
+    <h2>Hara gedirik?</h2>
+    <div class="seg" id="targetTabs" role="tablist"></div>
+    <h3 class="tg-name" id="tgName"></h3>
+    <p id="tgWhy"></p>
+    <dl class="facts" id="tgFacts"></dl>
+    <div id="tgArtemis"></div>
+    <button class="btn primary" id="tgRank">Bu hədəfə ən uyğun Yer əraziləri</button>
+  </div>
+  <aside class="col right photo-panel" id="tgPhoto"></aside>
+</section>
+
+<!-- 5. ANALOQLAR -->
+<section class="sec" data-sec="analogs" data-title="Analoqlar">
+  <div class="col left narrow">
+    <h2>Ən uyğun analoqlar</h2>
+    <p class="muted">Hədəfi seçin. Siyahı Analoq Uyğunluq İndeksinə (ACI, 0–100) görə sıralanıb.</p>
+    <div class="seg" id="anTarget" role="tablist"></div>
+    <ol class="rank" id="rankList"></ol>
+    <p class="legend"><i class="sw known"></i>Tanınmış analoq <i class="sw new"></i>Yeni namizəd</p>
+  </div>
+  <aside class="col right detail" id="siteDetail"></aside>
+</section>
+
+<!-- 6. MÜQAYİSƏ -->
+<section class="sec" data-sec="compare" data-title="Müqayisə">
+  <div class="twin-tag l"><span id="twL1"></span><b id="twL2"></b></div>
+  <div class="twin-tag r"><span id="twR1"></span><b id="twR2"></b></div>
+  <div class="twin-split"></div>
+  <div class="cmp-panel">
+    <div class="cmp-head">
+      <p class="verdict" id="twVerdict"></p>
+      <div class="cmp-ctrl">
+        <label class="sel-inline"><span class="sr">Yer ərazisi</span><select id="twSite"></select></label>
+        <div class="seg" id="twTarget" role="tablist"></div>
+      </div>
+    </div>
+    <table class="cmp" id="twTable"></table>
+  </div>
+</section>
+
+<!-- 7. MİQYAS -->
+<section class="sec" data-sec="scale" data-title="Miqyas">
+  <div class="col left">
+    <h2>Ölçü niyə vacibdir?</h2>
+    <p class="lead">Analoq ərazidə rover marşrutlarını və kosmonavtların piyada çıxışlarını sınayırıq. Bunun üçün yerin ölçüsü hədəfə yaxın olmalıdır.</p>
+    <div class="sizes" id="sizeList"></div>
+    <p class="takeaway" id="sizeTake">Haughton və Şeklton demək olar ki, eyni ölçüdədir. Haughton-u keçən rover və ya kosmonavt Şekltonda da təxminən eyni məsafəni qət edəcək.</p>
+    <label class="range">Şaquli şişirtmə <b id="exagV">2×</b><input type="range" id="exag" min="1" max="5" step="0.5" value="2"></label>
+    <p class="note">Diametrlər ölçülmüş qiymətlərdir. Krater formaları sadələşdirilib; dərinlik yalnız Şeklton üçün ölçülüb (LRO LOLA).</p>
+  </div>
+</section>
+
+<!-- 8. NƏTİCƏ -->
+<section class="sec" data-sec="final" data-title="Nəticə">
+  <div class="col left hero final">
+    <h2 class="big">Bir Yer. İki dünya.<br>Onlarca sınaq meydançası.</h2>
+    <ul class="conclusions">
+      <li><b>Real məlumat.</b> NASA POWER iqlimi, LRO, Mars Trek, EPIC və roverlərin son kadrları.</li>
+      <li><b>Ölçülə bilən oxşarlıq.</b> Hər ərazi 5 meyar üzrə 0–100 bal alır, mənbəyi göstərilir.</li>
+      <li><b>Yeni namizədlər.</b> Qobustanın palçıq vulkanları və Lutun yardanqları.</li>
+      <li><b>Dürüst sərhədlər.</b> Cazibə, vakuum və radiasiyanı Yer təkrarlaya bilmir. Bunu açıq deyirik.</li>
+    </ul>
+    <div class="cta">
+      <button class="btn primary" data-go="analogs">Platformanı sına</button>
+      <button class="btn" id="btnSources">Mənbələr</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- foto müqayisəsi -->
+<div class="overlay" id="pairView" hidden>
+  <div class="pair">
+    <button class="close" id="pairClose" aria-label="Bağla">×</button>
+    <h2 id="pairTitle"></h2>
+    <div class="compare-img" id="pairImg">
+      <img id="pairA" alt=""><div class="clip" id="pairClip"><img id="pairB" alt=""></div>
+      <div class="handle" id="pairHandle"><span></span></div>
+      <p class="cap l" id="pairCapA"></p><p class="cap r" id="pairCapB"></p>
+    </div>
+    <div class="pair-text">
+      <div><h3>Nə oxşardır</h3><p id="pairSame"></p></div>
+      <div><h3>Nə fərqlidir</h3><p id="pairDiff"></p></div>
+      <div><h3>Niyə vacibdir</h3><p id="pairWhy"></p></div>
+    </div>
+    <p class="credits" id="pairCredits"></p>
+  </div>
+</div>
+
+<!-- mənbələr -->
+<div class="overlay" id="sourcesView" hidden>
+  <div class="pair sources">
+    <button class="close" data-close aria-label="Bağla">×</button>
+    <h2>Mənbələr</h2>
+    <ul id="sourceList"></ul>
+  </div>
+</div>
+
+<div id="toast" role="status"></div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

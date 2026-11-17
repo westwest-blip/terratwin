@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TerraAnalog Explorer</title>
+<meta name="description" content="TerraAnalog Explorer analyses open NASA data and recommends places on Earth for Moon and Mars mission training.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='26' cy='34' r='18' fill='%235B9BE6'/%3E%3Ccircle cx='50' cy='14' r='8' fill='%23D97A48'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/game.css">
+<link rel="stylesheet" href="css/analog.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/jsm/" } }
+</script>
+</head>
+<body class="ta">
+
+<header class="top">
+  <a class="brand" href="terraanalog.html"><span class="bn"><b>TerraAnalog</b> Explorer</span><small id="tagline"></small></a>
+  <nav class="tabs" aria-label="Sections">
+    <a class="on" href="terraanalog.html" id="tabPlat"></a>
+    <a href="skaner.html" id="tabScan"></a>
+    <a href="oyun.html" id="tabGame"></a>
+    <a href="presentation.html" id="tabDeck"></a>
+  </nav>
+  <button class="btn quiet" type="button" id="how"></button>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="az">AZ</button>
+    <button type="button" data-lang="en">EN</button>
+  </div>
+</header>
+
+<main class="plat">
+  <aside class="left" id="left"></aside>
+
+  <section class="center">
+    <div class="maphead"><h1 id="mtitle"></h1><p class="small" id="mstatus"></p></div>
+    <div class="map" id="map" tabindex="0">
+      <div class="world" id="world">
+        <img src="assets/tex/earth_day_8k.jpg" alt="" draggable="false">
+        <canvas id="heat" width="576" height="361"></canvas>
+        <div class="grat"></div>
+        <div id="marks"></div>
+      </div>
+      <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
+      <div class="tip" id="tip" hidden></div>
+      <div class="legend" id="legend"></div>
+      <div class="loading" id="loading"></div>
+    </div>
+    <div class="candbar" id="candbar"></div>
+    <p class="foot" id="foot"></p>
+  </section>
+
+  <aside class="right" id="right"></aside>
+</main>
+
+<div class="modal" id="cmp" hidden>
+  <div class="cmp">
+    <header><h2 id="cmpTitle"></h2><button class="btn" type="button" id="cmpClose"></button></header>
+    <div class="views">
+      <figure><div class="v" id="vEarth"></div><figcaption id="capEarth"></figcaption></figure>
+      <figure><div class="v" id="vTarget"></div><figcaption id="capTarget"></figcaption></figure>
+    </div>
+    <p class="small" id="cmpNote"></p>
+    <div id="cmpRows"></div>
+  </div>
+</div>
+
+<div class="modal" id="about" hidden><div class="doc" id="aboutBox"></div></div>
+
+<script type="module" src="js/analog.js"></script>
+</body>
+</html>

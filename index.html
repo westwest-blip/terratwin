@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TerraTwin — NASA Space Apps Challenge 2026</title>
+<meta name="description" content="TerraTwin: Earth analogs of the Moon and Mars. 3D presentation, the TerraAnalog Explorer platform and a game, built on open NASA data.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='26' cy='34' r='18' fill='%235B9BE6'/%3E%3Ccircle cx='50' cy='14' r='8' fill='%23D97A48'/%3E%3C/svg%3E">
+<style>
+  @font-face { font-family: 'Plex'; src: url('vendor/fonts/ibm-plex-sans-latin-standard-normal.woff2') format('woff2-variations'); font-weight: 100 700; font-stretch: 75% 100%; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+2000-206F, U+2212; }
+  @font-face { font-family: 'Plex'; src: url('vendor/fonts/ibm-plex-sans-latin-ext-standard-normal.woff2') format('woff2-variations'); font-weight: 100 700; font-stretch: 75% 100%; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02FF, U+1E00-1EFF; }
+  :root { --void: #070a10; --panel: #0e131b; --line: #232b36; --text: #ebe8e2; --muted: #a2a9b4; --dim: #6f7783; --earth: #5b9be6; --mars: #d97a48; --amber: #ffb81c; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--void); color: var(--text); font: 400 16px/1.55 Plex, 'Segoe UI', system-ui, sans-serif;
+    background-image: radial-gradient(900px 500px at 85% -10%, rgba(217,122,72,.10), transparent 60%), radial-gradient(900px 600px at -10% 110%, rgba(91,155,230,.10), transparent 60%); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 28px max(16px, env(safe-area-inset-left, 0px)) 56px; display: grid; gap: 28px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; font-size: 18px; }
+  .brand svg { width: 30px; height: 30px; }
+  .lang { display: flex; border: 1px solid #3a444f; } .lang button { background: none; border: 0; color: var(--muted); padding: 5px 12px; font: inherit; cursor: pointer; } .lang button.on { background: var(--text); color: #0a0c0f; }
+  h1 { margin: 0; font-size: clamp(38px, 6.5vw, 72px); line-height: .98; font-weight: 700; font-stretch: 85%; letter-spacing: -.02em; text-wrap: balance; }
+  .lead { margin: 12px 0 0; max-width: 64ch; font-size: 18px; color: var(--muted); }
+  .video { margin: 0; border: 1px solid var(--line); background: #000; }
+  .video video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+  .video figcaption { padding: 10px 14px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); background: var(--panel); }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 900px) { .cards { grid-template-columns: 1fr; } }
+  .card { border: 1px solid var(--line); background: var(--panel); padding: 20px; display: grid; gap: 10px; align-content: start; }
+  .card.main { border-top: 3px solid var(--amber); }
+  .card h2 { margin: 0; font-size: 20px; font-weight: 600; }
+  .card p { margin: 0; color: var(--muted); }
+  .btn { justify-self: start; display: inline-flex; align-items: center; min-height: 42px; padding: 0 18px; background: var(--text); color: #0a0c0f; text-decoration: none; font-weight: 600; border-radius: 2px; }
+  .btn:hover { background: #fff; } .btn:focus-visible { outline: 2px solid var(--earth); outline-offset: 3px; }
+  .btn.alt { background: none; color: var(--text); border: 1px solid #3a444f; } .btn.alt:hover { border-color: var(--text); }
+  .steps { margin: 0; padding-left: 1.2em; color: var(--muted); } .steps li { margin: 3px 0; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; } @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+  ul.src { list-style: none; margin: 0; padding: 0; } ul.src li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  ul.src span { color: var(--dim); text-align: right; } ul.src a { color: var(--text); text-underline-offset: 3px; }
+  .note { font-size: 13.5px; color: var(--dim) !important; }
+  footer { color: var(--dim); font-size: 13px; }
+  [data-l] { display: none; } html[lang="az"] [data-l="az"], html[lang="en"] [data-l="en"] { display: revert; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="16" cy="22" r="11" fill="#5B9BE6"/><circle cx="33" cy="10" r="4.2" fill="#D97A48"/><circle cx="31" cy="30" r="2.6" fill="#C9CCD3"/></svg>TerraTwin</span>
+    <span>NASA Space Apps Challenge 2026 · Gəncə</span>
+    <div class="lang" role="group" aria-label="Language"><button type="button" data-set="az">AZ</button><button type="button" data-set="en">EN</button></div>
+  </header>
+
+  <section>
+    <h1><span data-l="az">Yerdə Ayın və Marsın əkizləri</span><span data-l="en">Earth twins of the Moon and Mars</span></h1>
+    <p class="lead" data-l="az">Ay və Marsdakı yerlərə ən çox bənzəyən Yer ərazilərini açıq NASA məlumatı ilə tapırıq: Artemis və Mars Sample Return kimi missiyalardan əvvəl astronavtların və avadanlığın məşqi üçün.</p>
+    <p class="lead" data-l="en">We find the places on Earth that best match sites on the Moon and Mars, using open NASA data, so astronauts and hardware can train before missions like Artemis and Mars Sample Return.</p>
+  </section>
+
+  <figure class="video">
+    <video controls preload="metadata" playsinline src="TerraTwin_teqdimat_720p.mp4"></video>
+    <figcaption><span data-l="az">3D təqdimatın videosu · 1 dəq 43 san · səssiz</span><span data-l="en">Video of the 3D presentation · 1:43 · no sound</span></figcaption>
+  </figure>
+
+  <div class="cards">
+    <article class="card main">
+      <h2>TerraAnalog Explorer</h2>
+      <p data-l="az">Əsas nəticəmiz. Marsda və ya Ayda yer seçin: platforma Yerin 71 010 quru xanasını yeddi göstərici üzrə müqayisə edir və astronavt məşqi üçün ən uyğun yerləri göstərir. Mavi kvadrat: NASA-nın artıq məşq etdiyi yer; sarı dairə: yeni namizəd.</p>
+      <p data-l="en">Our main result. Pick a place on Mars or the Moon: the platform compares 71,010 land cells of Earth on seven metrics and shows the best places for astronaut training. Blue square: where NASA already trains; yellow circle: a new candidate.</p>
+      <a class="btn" href="terraanalog.html"><span data-l="az">Platformanı aç</span><span data-l="en">Open the platform</span></a>
+    </article>
+    <article class="card">
+      <h2><span data-l="az">3D təqdimat</span><span data-l="en">3D presentation</span></h2>
+      <p data-l="az">Real NASA teksturaları ilə interaktiv Yer, Ay və Mars, orbitdəki peyklər, analoq yerlər, müqayisə. Planetə basın, uçuş başlayır.</p>
+      <p data-l="en">Interactive Earth, Moon and Mars with real NASA textures, satellites in orbit, analog sites and comparisons. Click a planet to fly to it.</p>
+      <a class="btn alt" href="presentation.html"><span data-l="az">Təqdimatı aç</span><span data-l="en">Open the presentation</span></a>
+    </article>
+    <article class="card">
+      <h2><span data-l="az">Oyun: Yer, yoxsa Mars?</span><span data-l="en">Game: Earth or Mars?</span></h2>
+      <p data-l="az">Real NASA fotoları: bu Yerdir, Aydır, yoxsa Mars? Analoq ideyasını 2 dəqiqədə göstərir.</p>
+      <p data-l="en">Real NASA photos: is it Earth, the Moon or Mars? Shows the analog idea in two minutes.</p>
+      <a class="btn alt" href="oyun.html"><span data-l="az">Oyunu aç</span><span data-l="en">Play</span></a>
+    </article>
+  </div>
+
+  <div class="two">
+    <article class="card">
+      <h2><span data-l="az">1 dəqiqədə necə baxmaq</span><span data-l="en">How to try it in one minute</span></h2>
+      <ol class="steps" data-l="az">
+        <li>«Platformanı aç» düyməsini basın.</li>
+        <li>Solda «Mars nümunələrinin qaytarılması» və ya «Ayın qütbü» seçin.</li>
+        <li>Kiçik Mars və ya Ay xəritəsində istənilən yerə basın: Yerdə oxşar yerlər görünür.</li>
+        <li>Sağda «Təhlili işə sal»: NASA-nın canlı hava məlumatı və əsaslandırma.</li>
+        <li>«3D müqayisə»: Yerdəki yer və Marsdakı yan-yana.</li>
+      </ol>
+      <ol class="steps" data-l="en">
+        <li>Press “Open the platform”.</li>
+        <li>On the left choose “Mars Sample Return” or “Lunar pole and ice”.</li>
+        <li>Click any point on the small Mars or Moon map: similar places on Earth appear.</li>
+        <li>On the right press “Run analysis”: live NASA weather data and a written rationale.</li>
+        <li>“3D comparison”: the Earth site next to the Martian one.</li>
+      </ol>
+      <p class="note" data-l="az">Kompüterdə, Chrome və ya Edge ilə baxmaq daha yaxşıdır. Nəticələr regional ilkin seçimdir (tor ≈ 55 km), sahədə yoxlanmayıb.</p>
+      <p class="note" data-l="en">Best viewed on a computer in Chrome or Edge. Results are a regional pre-selection (grid ≈ 55 km), not field-validated.</p>
+    </article>
+    <article class="card">
+      <h2><span data-l="az">Məlumat mənbələri</span><span data-l="en">Data sources</span></h2>
+      <ul class="src">
+        <li><a href="https://power.larc.nasa.gov/docs/" target="_blank" rel="noopener">NASA POWER</a><span>climate, albedo, live data</span></li>
+        <li><a href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noopener">NASA PDS · MOLA</a><span>Mars terrain</span></li>
+        <li><a href="https://pds-geosciences.wustl.edu/missions/lro/lola.htm" target="_blank" rel="noopener">NASA PDS · LOLA</a><span>Moon terrain</span></li>
+        <li><a href="https://www.ngdc.noaa.gov/mgg/global/etopo5.HTML" target="_blank" rel="noopener">NOAA ETOPO5</a><span>Earth terrain</span></li>
+        <li><a href="https://visibleearth.nasa.gov/collection/1484/blue-marble" target="_blank" rel="noopener">NASA Blue Marble</a><span>Earth imagery</span></li>
+        <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" target="_blank" rel="noopener">NASA NSSDC</a><span>Moon and Mars facts</span></li>
+        <li><a href="https://images.nasa.gov/" target="_blank" rel="noopener">NASA Image and Video Library</a><span>game photos</span></li>
+        <li><a href="https://science.nasa.gov/missions/artemis/nasas-artemis-ii-crew-uses-iceland-terrain-for-lunar-training/" target="_blank" rel="noopener">NASA · Artemis II in Iceland</a><span>training polygon</span></li>
+        <li><a href="https://volcano.si.edu/" target="_blank" rel="noopener">Smithsonian GVP</a><span>volcanoes (not NASA)</span></li>
+      </ul>
+    </article>
+  </div>
+
+  <footer>TerraTwin · NASA Space Apps Challenge 2026 · Gəncə</footer>
+</div>
+<script>
+  (function () {
+    var set = function (l) { document.documentElement.lang = l; document.querySelectorAll('.lang button').forEach(function (b) { b.classList.toggle('on', b.dataset.set === l); }); try { localStorage.setItem('tt_lang', l); } catch (e) {} };
+    var saved = 'az'; try { saved = localStorage.getItem('tt_lang') === 'en' ? 'en' : 'az'; } catch (e) {}
+    document.querySelectorAll('.lang button').forEach(function (b) { b.onclick = function () { set(b.dataset.set); }; });
+    set(saved);
+  })();
+</script>
+</body>
+</html>

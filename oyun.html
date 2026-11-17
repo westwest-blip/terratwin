@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yer, yoxsa Mars? — TerraTwin</title>
+<meta name="description" content="A game built on real NASA photos: can you tell Earth from the Moon and Mars?">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='26' cy='34' r='18' fill='%235B9BE6'/%3E%3Ccircle cx='50' cy='14' r='8' fill='%23D97A48'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/game.css">
+<script src="data/game.js"></script>
+<script src="data/game_extra.js"></script>
+<script src="data/game_more.js"></script>
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="oyun.html" id="brand">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="16" cy="22" r="11" fill="#5B9BE6"/><circle cx="16" cy="22" r="11" fill="url(#sh)"/><circle cx="33" cy="10" r="4.2" fill="#D97A48"/><circle cx="31" cy="30" r="2.6" fill="#C9CCD3"/><defs><radialGradient id="sh" cx=".7" cy=".3" r=".9"><stop offset=".45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient></defs></svg>
+    <span>TerraTwin</span>
+  </a>
+  <div class="hud" id="hud" hidden>
+    <ol class="steps" id="steps" aria-label="Rounds"></ol>
+    <p class="score"><span id="scoreLabel"></span> <b id="score">0</b></p>
+    <p class="clock" id="clock" aria-live="off"><b id="secs">15</b><span id="secUnit"></span></p>
+  </div>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="az">AZ</button>
+    <button type="button" data-lang="en">EN</button>
+  </div>
+</header>
+<div class="timebar" id="timebar" hidden><i id="timefill"></i></div>
+
+<main id="app" tabindex="-1"></main>
+
+<script type="module" src="js/game.js"></script>
+</body>
+</html>
